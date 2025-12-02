@@ -1,41 +1,29 @@
-// js/script.js - Versão com Pausa, Sons e Lógica Aprimorada
-
-// =========================================================================
-// PONTO DE ENTRADA DA APLICAÇÃO
-// =========================================================================
 window.addEventListener('DOMContentLoaded', () => {
     setupEventListeners();
 });
 
-// =========================================================================
-// CONFIGURAÇÃO DOS EVENTOS
-// =========================================================================
 function setupEventListeners() {
     document.getElementById('btn-jogar').addEventListener('click', iniciarJogo);
     document.getElementById('btn-pausar').addEventListener('click', togglePause);
     document.getElementById('btn-proxima-rodada').addEventListener('click', sortearCartas);
 }
 
-// =========================================================================
-// ESTADO E LÓGICA DO JOGO (GAME STATE & LOGIC)
-// =========================================================================
 let monteJogador = [];
 let monteMaquina = [];
 let cartaJogador;
 let cartaMaquina;
-let jogoPausado = false; // Novo estado para controlar a pausa
+let jogoPausado = false;
 
-// Funções de som
 const somVitoria = document.getElementById('sound-win');
 const somDerrota = document.getElementById('sound-lose');
 
 function tocarSom(som) {
-    som.currentTime = 0; // Reinicia o som para o início
+    som.currentTime = 0;
     som.play();
 }
 
 function togglePause() {
-    jogoPausado = !jogoPausado; // Inverte o estado de pausa
+    jogoPausado = !jogoPausado;
     const overlay = document.getElementById('pause-overlay');
     const btnPausar = document.getElementById('btn-pausar');
 
@@ -60,7 +48,7 @@ function iniciarJogo() {
     monteMaquina = baralhoEmbaralhado.slice(metade);
 
     btnJogar.disabled = true;
-    btnPausar.disabled = false; // Habilita o botão de pausar
+    btnPausar.disabled = false;
     btnProximaRodada.disabled = false;
 
     sortearCartas();
@@ -73,7 +61,7 @@ function atualizarPlacar() {
 }
 
 function sortearCartas() {
-    if (jogoPausado) return; // Não faz nada se o jogo estiver pausado
+    if (jogoPausado) return;
 
     if (monteJogador.length === 0 || monteMaquina.length === 0) {
         fimDeJogo();
@@ -100,7 +88,7 @@ function exibirCarta(elemento, carta, ehJogador) {
     html += '<div class="carta-atributos"><ul>';
 
     for (let atributo in carta.atributos) {
-        // Apenas adiciona o evento de clique se for o jogador e o jogo não estiver pausado
+
         if (ehJogador) {
             html += `<li onclick="comparar('${atributo}')">${atributo}: ${carta.atributos[atributo]}</li>`;
         } else {
@@ -113,7 +101,7 @@ function exibirCarta(elemento, carta, ehJogador) {
 }
 
 function comparar(atributoSelecionado) {
-    if (jogoPausado) return; // Bloqueia a ação se o jogo estiver pausado
+    if (jogoPausado) return;
 
     const resultadoEl = document.getElementById('resultado');
     const btnProximaRodada = document.getElementById('btn-proxima-rodada');
@@ -142,7 +130,6 @@ function comparar(atributoSelecionado) {
     atualizarPlacar();
     btnProximaRodada.disabled = false;
 
-    // Remove o onclick dos atributos para evitar jogada dupla
     const atributosLi = document.getElementById('carta-jogador').querySelectorAll('.carta-atributos li');
     atributosLi.forEach(li => li.onclick = null);
 }
@@ -159,7 +146,6 @@ function fimDeJogo() {
     btnPausar.disabled = true;
     btnJogar.disabled = false;
     btnJogar.textContent = "Jogar Novamente";
-    // Remove o listener antigo para evitar múltiplos inícios
     btnJogar.replaceWith(btnJogar.cloneNode(true));
     document.getElementById('btn-jogar').addEventListener('click', () => window.location.reload());
 }
